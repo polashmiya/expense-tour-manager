@@ -26,21 +26,21 @@ const BalanceSummary: React.FC<Props> = ({ income, expense, balance, label }) =>
           <MaterialCommunityIcons name="arrow-down-bold-circle" color="#1976d2" size={28} style={styles.icon} />
           <View>
             <Text style={styles.labelText}>Income</Text>
-            <Text style={styles.income}>${income.toFixed(2)}</Text>
+            <Text style={styles.income}>৳{income.toFixed(2)}</Text>
           </View>
         </View>
         <View style={styles.summaryRow}>
           <MaterialCommunityIcons name="arrow-up-bold-circle" color="#f44336" size={28} style={styles.icon} />
           <View>
             <Text style={styles.labelText}>Expense</Text>
-            <Text style={styles.expense}>${expense.toFixed(2)}</Text>
+            <Text style={styles.expense}>৳{expense.toFixed(2)}</Text>
           </View>
         </View>
         <View style={styles.summaryRow}>
           <MaterialCommunityIcons name="wallet" color="#1976d2" size={28} style={styles.icon} />
           <View>
             <Text style={styles.labelText}>Balance</Text>
-            <Text style={styles.balance}>${balance.toFixed(2)}</Text>
+            <Text style={styles.balance}>৳{balance.toFixed(2)}</Text>
           </View>
         </View>
       </View>

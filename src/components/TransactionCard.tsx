@@ -22,7 +22,7 @@ const TransactionCardRight = ({ isIncome, amount, onEdit, onDelete }: { isIncome
   <View style={styles.rightContainer}>
     <View style={[styles.amountBox, isIncome ? styles.incomeBgLight : styles.expenseBgLight]}>
       <Text style={[styles.amount, isIncome ? styles.income : styles.expense]}>
-        {isIncome ? '+' : '-'}${amount.toFixed(2)}
+  {isIncome ? '+' : '-'}৳{amount.toFixed(2)}
       </Text>
     </View>
     <IconButton icon="pencil" onPress={onEdit} style={styles.iconBtn} size={18} />
@@ -56,7 +56,7 @@ const TransactionCard: React.FC<Props> = ({ transaction, onEdit, onDelete }) => 
         <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContainer}>
           <Text style={styles.modalTitle}>{transaction.title}</Text>
           <Text style={styles.modalDate}>{new Date(transaction.date).toLocaleString()}</Text>
-          <Text style={[styles.modalAmount, isIncome ? styles.income : styles.expense]}>{isIncome ? '+' : '-'}${transaction.amount.toFixed(2)}</Text>
+          <Text style={[styles.modalAmount, isIncome ? styles.income : styles.expense]}>{isIncome ? '+' : '-'}৳{transaction.amount.toFixed(2)}</Text>
           {transaction.description ? (
             <Text style={styles.modalDesc}>{transaction.description}</Text>
           ) : null}

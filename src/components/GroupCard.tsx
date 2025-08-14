@@ -23,9 +23,9 @@ const GroupCard: React.FC<Props> = ({ group, income, expense, balance, onPress }
     />
     <Card.Content>
       <View style={styles.row}>
-        <Text style={styles.income}>Income: ${income.toFixed(2)}</Text>
-        <Text style={styles.expense}>Expense: ${expense.toFixed(2)}</Text>
-        <Text style={styles.balance}>Balance: ${balance.toFixed(2)}</Text>
+  <Text style={styles.income}>Income: ৳{income.toFixed(2)}</Text>
+  <Text style={styles.expense}>Expense: ৳{expense.toFixed(2)}</Text>
+  <Text style={styles.balance}>Balance: ৳{balance.toFixed(2)}</Text>
       </View>
     </Card.Content>
   </Card>
