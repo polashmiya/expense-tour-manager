@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Card, Text, IconButton, Avatar } from 'react-native-paper';
+import { Card, Text, IconButton, Avatar, Portal, Modal } from 'react-native-paper';
 import { Transaction } from '../types';
 
 interface Props {
@@ -32,6 +32,7 @@ const TransactionCardRight = ({ isIncome, amount, onEdit, onDelete }: { isIncome
 
 const TransactionCard: React.FC<Props> = ({ transaction, onEdit, onDelete }) => {
   const isIncome = transaction.type === 'income';
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   // Memoize left and right renderers to avoid inline component definitions
   const renderLeft = React.useCallback(() => <TransactionCardLeft isIncome={isIncome} />, [isIncome]);
@@ -41,20 +42,75 @@ const TransactionCard: React.FC<Props> = ({ transaction, onEdit, onDelete }) => 
   );
 
   return (
-    <Card style={styles.card}>
-      <Card.Title
-        title={<Text style={styles.title}>{transaction.title}</Text>}
-        subtitle={<Text style={styles.date}>{new Date(transaction.date).toLocaleDateString()}</Text>}
-        left={renderLeft}
-        right={renderRight}
-        style={styles.cardTitle}
-      />
-      <Card.Content style={styles.cardContent}></Card.Content>
-    </Card>
+    <>
+      <Card style={styles.card} onPress={() => setModalVisible(true)}>
+        <Card.Title
+          title={<Text style={styles.title}>{transaction.title}</Text>}
+          subtitle={<Text style={styles.date}>{new Date(transaction.date).toLocaleDateString()}</Text>}
+          left={renderLeft}
+          right={renderRight}
+          style={styles.cardTitle}
+        />
+      </Card>
+      <Portal>
+        <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContainer}>
+          <Text style={styles.modalTitle}>{transaction.title}</Text>
+          <Text style={styles.modalDate}>{new Date(transaction.date).toLocaleString()}</Text>
+          <Text style={[styles.modalAmount, isIncome ? styles.income : styles.expense]}>{isIncome ? '+' : '-'}${transaction.amount.toFixed(2)}</Text>
+          {transaction.description ? (
+            <Text style={styles.modalDesc}>{transaction.description}</Text>
+          ) : null}
+          <View style={styles.modalActions}>
+            <IconButton icon="pencil" onPress={() => { setModalVisible(false); onEdit(); }} />
+            <IconButton icon="delete" onPress={() => { setModalVisible(false); onDelete(); }} />
+            <IconButton icon="close" onPress={() => setModalVisible(false)} />
+          </View>
+        </Modal>
+      </Portal>
+    </>
   );
 };
 
+
 const styles = StyleSheet.create({
+  modalContainer: {
+    backgroundColor: '#fff',
+    margin: 24,
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  modalTitle: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 4,
+    color: '#222',
+  },
+  modalDate: {
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 12,
+  },
+  modalAmount: {
+    fontWeight: 'bold',
+    fontSize: 22,
+    marginBottom: 12,
+  },
+  modalDesc: {
+    fontSize: 15,
+    color: '#444',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   card: {
     borderRadius: 16,
     marginVertical: 8,
@@ -66,7 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   avatar: {
-    backgroundColor: '#888',
+    backgroundColor: '#1976d2',
   },
   incomeBg: {
     backgroundColor: '#4caf50',
@@ -122,11 +178,11 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
   avatarSmall: {
-    backgroundColor: '#888',
+    backgroundColor: '#1976d2',
     marginLeft: 0,
     marginRight: 0,
   },
-  income: { color: '#4caf50' },
+  income: { color: '#1976d2' },
   expense: { color: '#f44336' },
 });
 

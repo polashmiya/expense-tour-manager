@@ -14,6 +14,7 @@ const AddTransactionScreen: React.FC<{ route: any; navigation: any }> = ({ route
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
+  const [description, setDescription] = useState('');
   const [error, setError] = useState('');
 
   const handleSave = () => {
@@ -28,6 +29,7 @@ const AddTransactionScreen: React.FC<{ route: any; navigation: any }> = ({ route
       amount: Number(amount),
       date: date.toISOString(),
       groupId: isGroup ? groupId : undefined,
+      description: description.trim() ? description : undefined,
     });
     navigation.goBack();
   };
@@ -42,7 +44,13 @@ const AddTransactionScreen: React.FC<{ route: any; navigation: any }> = ({ route
       </View>
       <InputField label="Title" value={title} onChangeText={setTitle} error={error && !title ? error : ''} />
       <InputField label="Amount" value={amount} onChangeText={setAmount} keyboardType="numeric" error={error && (!amount || isNaN(Number(amount))) ? error : ''} />
-      <Button onPress={() => setShowDate(true)} style={{ marginVertical: 8 }}>Pick Date: {date.toLocaleDateString()}</Button>
+      <InputField
+        label="Description (optional)"
+        value={description}
+        onChangeText={setDescription}
+        multiline
+      />
+  <Button buttonColor="#1976d2" textColor="#fff" onPress={() => setShowDate(true)} style={{ marginVertical: 8 }}>Pick Date: {date.toLocaleDateString()}</Button>
       {showDate && (
         <DateTimePicker
           value={date}
@@ -54,7 +62,7 @@ const AddTransactionScreen: React.FC<{ route: any; navigation: any }> = ({ route
           }}
         />
       )}
-      <Button mode="contained" onPress={handleSave} style={{ marginTop: 16 }}>Save</Button>
+  <Button mode="contained" buttonColor="#1976d2" onPress={handleSave} style={{ marginTop: 16 }}>Save</Button>
     </View>
   );
 };

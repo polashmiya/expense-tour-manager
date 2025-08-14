@@ -7,6 +7,7 @@ export interface Transaction {
   amount: number;
   date: string; // ISO string
   groupId?: string; // undefined for personal
+  description?: string;
 }
 
 export interface Group {

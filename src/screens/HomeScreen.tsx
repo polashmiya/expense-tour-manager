@@ -38,8 +38,8 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       <Divider style={{ marginVertical: 8 }} />
       {/* Section 2: Quick Actions */}
       <View style={styles.row}>
-        <Button mode="contained" onPress={() => navigation.navigate('AddTransaction', { isGroup: false })} style={styles.actionBtn}>Add Personal Transaction</Button>
-        <Button mode="contained" onPress={() => navigation.navigate('AddGroup')} style={styles.actionBtn}>Add Group</Button>
+  <Button mode="contained" buttonColor="#1976d2" onPress={() => navigation.navigate('AddTransaction', { isGroup: false })} style={styles.actionBtn}>Add Personal Transaction</Button>
+  <Button mode="contained" buttonColor="#1976d2" onPress={() => navigation.navigate('AddGroup')} style={styles.actionBtn}>Add Group</Button>
       </View>
       <Divider style={{ marginVertical: 8 }} />
       {/* Section 3: Group List */}
@@ -67,7 +67,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           onDelete={() => deleteTransaction(tx.id)}
         />
       ))}
-      <Button onPress={() => navigation.navigate('AllPersonalTransactions')}>View All</Button>
+  <Button buttonColor="#1976d2" textColor="#fff" onPress={() => navigation.navigate('AllPersonalTransactions')}>View All</Button>
     </ScrollView>
   );
 };
