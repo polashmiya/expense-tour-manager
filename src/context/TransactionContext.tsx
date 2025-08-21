@@ -22,19 +22,26 @@ export const useTransactionContext = () => {
   return ctx;
 };
 
+
 export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      setTransactions(await getAllTransactions());
-      setGroups(await getAllGroups());
+      const [txs, grps] = await Promise.all([
+        getAllTransactions(),
+        getAllGroups(),
+      ]);
+      setTransactions(txs);
+      setGroups(grps);
+      setLoading(false);
     })();
   }, []);
 
-  useEffect(() => { saveTransactions(transactions); }, [transactions]);
-  useEffect(() => { saveGroups(groups); }, [groups]);
+  useEffect(() => { if (!loading) saveTransactions(transactions); }, [transactions, loading]);
+  useEffect(() => { if (!loading) saveGroups(groups); }, [groups, loading]);
 
   const addTransaction = (tx: Transaction) => setTransactions(txs => [tx, ...txs]);
   const editTransaction = (tx: Transaction) => setTransactions(txs => txs.map(t => t.id === tx.id ? tx : t));
@@ -46,6 +53,10 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setGroups(gs => gs.filter(g => g.id !== id));
     setTransactions(txs => txs.filter(t => t.groupId !== id));
   };
+
+  if (loading) {
+    return null; // or a loading spinner if you want
+  }
 
   return (
     <TransactionContext.Provider value={{ transactions, groups, addTransaction, editTransaction, deleteTransaction, addGroup, editGroup, deleteGroup }}>

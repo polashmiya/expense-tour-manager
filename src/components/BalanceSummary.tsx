@@ -8,13 +8,17 @@ interface Props {
   expense: number;
   balance: number;
   label?: string;
+  onIncomePress?: () => void;
+  onExpensePress?: () => void;
 }
 
 const BalanceSummaryLeft = () => (
   <Avatar.Icon icon="chart-donut" style={styles.avatarSmall} color="#fff" size={24} />
 );
 
-const BalanceSummary: React.FC<Props> = ({ income, expense, balance, label }) => (
+import { TouchableOpacity } from 'react-native';
+
+const BalanceSummary: React.FC<Props> = ({ income, expense, balance, label, onIncomePress, onExpensePress }) => (
   <Card style={styles.card}>
     <Card.Title
       title={label || 'Summary'}
@@ -22,25 +26,29 @@ const BalanceSummary: React.FC<Props> = ({ income, expense, balance, label }) =>
     />
     <Card.Content>
       <View style={styles.summaryCol}>
-        <View style={styles.summaryRow}>
-          <MaterialCommunityIcons name="arrow-down-bold-circle" color="#1976d2" size={28} style={styles.icon} />
-          <View>
-            <Text style={styles.labelText}>Income</Text>
-            <Text style={styles.income}>৳{income.toFixed(2)}</Text>
+        <TouchableOpacity disabled={!onIncomePress} onPress={onIncomePress} style={{ borderRadius: 10 }}>
+          <View style={styles.summaryRow}>
+            <MaterialCommunityIcons name="arrow-down-bold-circle" color="#1976d2" size={28} style={styles.icon} />
+            <View>
+              <Text style={styles.labelText}>Income</Text>
+              <Text style={styles.income}>৳ {income.toFixed(2)}</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.summaryRow}>
-          <MaterialCommunityIcons name="arrow-up-bold-circle" color="#f44336" size={28} style={styles.icon} />
-          <View>
-            <Text style={styles.labelText}>Expense</Text>
-            <Text style={styles.expense}>৳{expense.toFixed(2)}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity disabled={!onExpensePress} onPress={onExpensePress} style={{ borderRadius: 10 }}>
+          <View style={styles.summaryRow}>
+            <MaterialCommunityIcons name="arrow-up-bold-circle" color="#f44336" size={28} style={styles.icon} />
+            <View>
+              <Text style={styles.labelText}>Expense</Text>
+              <Text style={styles.expense}>৳ {expense.toFixed(2)}</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
         <View style={styles.summaryRow}>
           <MaterialCommunityIcons name="wallet" color="#1976d2" size={28} style={styles.icon} />
           <View>
             <Text style={styles.labelText}>Balance</Text>
-            <Text style={styles.balance}>৳{balance.toFixed(2)}</Text>
+            <Text style={styles.balance}>৳ {balance.toFixed(2)}</Text>
           </View>
         </View>
       </View>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import InputField from '../components/InputField';
-import { useTransactionContext } from '../context/TransactionContext';
+import { useTransactionContext } from '../../../context/TransactionContext';
+import InputField from '../../../components/InputField';
 
 const EditGroupScreen: React.FC<{ route: any; navigation: any }> = ({ route, navigation }) => {
   const { groupId } = route.params;

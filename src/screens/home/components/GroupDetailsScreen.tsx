@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Text, Button, Divider } from 'react-native-paper';
-import { useTransactionContext } from '../context/TransactionContext';
-import BalanceSummary from '../components/BalanceSummary';
-import TransactionCard from '../components/TransactionCard';
-
+import { useTransactionContext } from '../../../context/TransactionContext';
+import BalanceSummary from '../../../components/BalanceSummary';
+import TransactionCard from '../../../components/TransactionCard';
 const GroupDetailsScreen: React.FC<{ route: any; navigation: any }> = ({ route, navigation }) => {
   const { groupId } = route.params;
-  const { groups, transactions, editGroup, deleteGroup, deleteTransaction } = useTransactionContext();
+  const { groups, transactions, deleteGroup, deleteTransaction } = useTransactionContext();
   const group = groups.find(g => g.id === groupId);
   if (!group) return <Text>Group not found</Text>;
   const groupTxs = transactions.filter(t => t.groupId === groupId);
@@ -16,10 +15,14 @@ const GroupDetailsScreen: React.FC<{ route: any; navigation: any }> = ({ route, 
   const balance = income - expense;
 
   const handleDeleteGroup = () => {
-    Alert.alert('Delete Group', 'Are you sure you want to delete this group and all its transactions?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => { deleteGroup(groupId); navigation.goBack(); } },
-    ]);
+    Alert.alert(
+      'Delete Group',
+      'Are you sure you want to delete this group and all its transactions?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: () => { deleteGroup(groupId); navigation.goBack(); } },
+      ]
+    );
   };
 
   return (

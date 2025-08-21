@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { Card, Text, IconButton, Avatar, Portal, Modal } from 'react-native-paper';
 import { Transaction } from '../types';
 
@@ -34,11 +34,23 @@ const TransactionCard: React.FC<Props> = ({ transaction, onEdit, onDelete }) => 
   const isIncome = transaction.type === 'income';
   const [modalVisible, setModalVisible] = React.useState(false);
 
+  // Show confirmation before delete
+  const handleDelete = React.useCallback(() => {
+    Alert.alert(
+      'Delete Transaction',
+      'Are you sure you want to delete this transaction?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: onDelete },
+      ]
+    );
+  }, [onDelete]);
+
   // Memoize left and right renderers to avoid inline component definitions
   const renderLeft = React.useCallback(() => <TransactionCardLeft isIncome={isIncome} />, [isIncome]);
   const renderRight = React.useCallback(
-    () => <TransactionCardRight isIncome={isIncome} amount={transaction.amount} onEdit={onEdit} onDelete={onDelete} />,
-    [isIncome, transaction.amount, onEdit, onDelete]
+    () => <TransactionCardRight isIncome={isIncome} amount={transaction.amount} onEdit={onEdit} onDelete={handleDelete} />, // use handleDelete
+    [isIncome, transaction.amount, onEdit, handleDelete]
   );
 
   return (
@@ -62,7 +74,7 @@ const TransactionCard: React.FC<Props> = ({ transaction, onEdit, onDelete }) => 
           ) : null}
           <View style={styles.modalActions}>
             <IconButton icon="pencil" onPress={() => { setModalVisible(false); onEdit(); }} />
-            <IconButton icon="delete" onPress={() => { setModalVisible(false); onDelete(); }} />
+            <IconButton icon="delete" onPress={() => { setModalVisible(false); handleDelete(); }} />
             <IconButton icon="close" onPress={() => setModalVisible(false)} />
           </View>
         </Modal>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import InputField from '../components/InputField';
-import { useTransactionContext } from '../context/TransactionContext';
+import { useTransactionContext } from '../../../context/TransactionContext';
+import InputField from '../../../components/InputField';
 
 const AddGroupScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { addGroup } = useTransactionContext();
