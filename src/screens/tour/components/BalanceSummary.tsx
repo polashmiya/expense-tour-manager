@@ -15,17 +15,73 @@ function calculateBalances(tour: Tour) {
   return balances;
 }
 
-const BalanceSummary = ({ tour, selectedMember }: { tour: Tour, selectedMember: string | null }) => {
+const BalanceSummary = ({ tour }: { tour: Tour }) => {
   const balances = calculateBalances(tour);
-  const showMembers = selectedMember ? [tour.members.find(m => m.id === selectedMember)!] : tour.members;
   return (
-    <View style={{ marginVertical: 8 }}>
-      <Text style={{ fontWeight: 'bold' }}>Balances:</Text>
-      {showMembers.map(m => (
-        <Text key={m.id}>{m.name}: {balances[m.id] >= 0 ? '+' : ''}{balances[m.id].toFixed(2)}</Text>
+    <View style={styles.card}>
+      <Text style={styles.title}>Balances</Text>
+      {tour.members.map(m => (
+        <View key={m.id} style={styles.row}>
+          <Text style={styles.name}>{m.name}</Text>
+          <Text
+            style={[
+              styles.amount,
+              balances[m.id] > 0 ? styles.positive : balances[m.id] < 0 ? styles.negative : styles.zero
+            ]}
+          >
+            {'৳ ' + (balances[m.id] > 0 ? '+' : balances[m.id] < 0 ? '-' : '') + Math.abs(balances[m.id]).toFixed(2)}
+          </Text>
+        </View>
       ))}
     </View>
   );
+};
+
+
+const styles = {
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginVertical: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  title: {
+    fontWeight: 'bold' as const,
+    fontSize: 18,
+    marginBottom: 10,
+    color: '#333',
+    textAlign: 'center' as const,
+  },
+  row: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  name: {
+    fontSize: 16,
+    color: '#444',
+  },
+  amount: {
+    fontSize: 16,
+    fontWeight: 'bold' as const,
+  },
+  positive: {
+    color: '#2ecc40',
+  },
+  negative: {
+    color: '#ff4136',
+  },
+  zero: {
+    color: '#888',
+  },
 };
 
 export default BalanceSummary;

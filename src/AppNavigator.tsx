@@ -19,6 +19,7 @@ import AllTransactionsScreen from './screens/home/components/AllTransactionsScre
 import CreateTourScreen from './screens/tour/CreateTourScreen';
 import TourDetailScreen from './screens/tour/TourDetailScreen';
 import TourScreen from './screens/tour/TourScreen';
+import AddExpenseScreen from './screens/tour/AddExpenseScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -120,6 +121,11 @@ const AppNavigator = () => (
             name="TourDetail"
             component={TourDetailScreen}
             options={{ title: 'Tour Details' }}
+          />
+          <Stack.Screen
+            name="AddExpense"
+            component={AddExpenseScreen}
+            options={{ title: 'Add Expense' }}
           />
         </Stack.Navigator>
       </NavigationContainer>

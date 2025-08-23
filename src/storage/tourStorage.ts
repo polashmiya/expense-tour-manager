@@ -1,3 +1,12 @@
+// Delete an expense from a tour by expense id
+export const deleteExpenseFromTour = async (tourId: string, expenseId: string): Promise<void> => {
+  const tours = await getTours();
+  const idx = tours.findIndex(t => t.id === tourId);
+  if (idx !== -1) {
+    tours[idx].expenses = tours[idx].expenses.filter(e => e.id !== expenseId);
+    await saveTours(tours);
+  }
+};
 // Local storage logic for tours using AsyncStorage
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Tour, TourBalance } from '../types/tour';

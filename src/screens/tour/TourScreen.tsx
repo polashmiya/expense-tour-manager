@@ -2,13 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Text, Card, IconButton } from 'react-native-paper';
-import { getTours } from '../../storage/tourStorage';
+import { getTours, deleteTour } from '../../storage/tourStorage';
 import { Tour } from '../../types/tour';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+  TourDetail: { tourId: string };
+  CreateTour: undefined;
+};
 
 const TourScreen = () => {
   const [tours, setTours] = useState<Tour[]>([]);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const loadTours = async () => {
     const data = await getTours();
@@ -21,15 +27,30 @@ const TourScreen = () => {
     return unsubscribe;
   }, [navigation]);
 
+  const handleDeleteTour = async (tourId: string) => {
+    await deleteTour(tourId);
+    loadTours();
+  };
+
   const renderTour = ({ item }: { item: Tour }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('TourDetail', { tourId: item.id })}>
-      <Card style={styles.card}>
+    <Card style={styles.card}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('TourDetail', { tourId: item.id })}
+        style={styles.tourTouchable}
+      >
         <Card.Title title={item.name} titleStyle={styles.cardTitle} />
         <Card.Content>
           <Text style={styles.cardDesc}>{item.description}</Text>
         </Card.Content>
-      </Card>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      <IconButton
+        icon="delete"
+        size={24}
+        onPress={() => handleDeleteTour(item.id)}
+        style={styles.deleteBtn}
+        accessibilityLabel="Delete Tour"
+      />
+    </Card>
   );
 
   return (
@@ -48,7 +69,7 @@ const TourScreen = () => {
         data={tours}
         keyExtractor={item => item.id}
         renderItem={renderTour}
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={styles.flatListContent}
         ListEmptyComponent={<Text style={styles.emptyText}>No tours found.</Text>}
       />
     </View>
@@ -82,6 +103,12 @@ const styles = StyleSheet.create({
     elevation: 2,
     backgroundColor: '#fff',
   },
+  deleteBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    zIndex: 1,
+  },
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -90,6 +117,12 @@ const styles = StyleSheet.create({
   cardDesc: {
     fontSize: 16,
     color: '#666',
+  },
+  tourTouchable: {
+    flex: 1,
+  },
+  flatListContent: {
+    paddingBottom: 24,
   },
   emptyText: {
     textAlign: 'center',

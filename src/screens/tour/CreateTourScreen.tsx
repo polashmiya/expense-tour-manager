@@ -1,7 +1,6 @@
-import { StyleSheet, ScrollView, TouchableOpacity, View, Modal } from 'react-native';
 
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, View, Modal, Alert } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, View, Modal } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import InputField from '../../components/InputField';
 import { TourMember } from '../../types/tour';
@@ -98,9 +97,21 @@ const CreateTourScreen = () => {
             />
           )}
         </View>
-        <Button mode="outlined" onPress={() => setShowMembersModal(true)}>
-          Add Members
-        </Button>
+  <View style={styles.addMembersSection}>
+          <Button mode="outlined" onPress={() => setShowMembersModal(true)}>
+            {selectedMembers.length > 0 ? `Members (${selectedMembers.length})` : 'Add Members'}
+          </Button>
+          <View style={styles.selectedMembersRow}>
+            {selectedMembers.length === 0 && (
+              <Text style={styles.noMembersSelectedText}>No members selected</Text>
+            )}
+            {members.filter(m => selectedMembers.includes(m.id)).map(m => (
+              <View key={m.id} style={styles.memberChip}>
+                <Text style={styles.memberChipText}>{m.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
         <Button mode="contained" onPress={handleCreate} style={styles.button}>
           Create
         </Button>
@@ -158,10 +169,10 @@ const CreateTourScreen = () => {
       </Modal>
       {/* Add Member Modal - now outside ScrollView */}
       <Modal
-        visible={showAddMemberModal}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setShowAddMemberModal(false)}
+  visible={showAddMemberModal}
+  animationType="fade"
+  transparent
+  onRequestClose={() => setShowAddMemberModal(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -175,7 +186,9 @@ const CreateTourScreen = () => {
               mode="contained"
               onPress={() => {
                 if (newMemberName.trim()) {
-                  setMembers(prev => [...prev, { id: Date.now().toString(), name: newMemberName.trim() }]);
+                  const newId = Date.now().toString();
+                  setMembers(prev => [...prev, { id: newId, name: newMemberName.trim() }]);
+                  setSelectedMembers(prev => [...prev, newId]);
                   setNewMemberName('');
                   setShowAddMemberModal(false);
                   setTimeout(() => setShowMembersModal(true), 300);
@@ -196,6 +209,13 @@ const CreateTourScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  addMembersSection: {
+    marginBottom: 10,
+  },
+  noMembersSelectedText: {
+    color: '#aaa',
+    marginTop: 8,
+  },
   modalHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

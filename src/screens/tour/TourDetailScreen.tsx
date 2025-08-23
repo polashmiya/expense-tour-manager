@@ -1,42 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, TouchableOpacity } from 'react-native';
-import { getTours, updateTour } from '../../storage/tourStorage';
-import { Tour, TourMember, TourExpense } from '../../types/tour';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { getTours } from '../../storage/tourStorage';
+import { Tour } from '../../types/tour';
 import ExpenseList from './components/ExpenseList';
-import MemberDropdown from './components/MemberDropdown';
 import BalanceSummary from './components/BalanceSummary';
-import ExpenseForm from './components/ExpenseForm';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 const TourDetailScreen = () => {
   const route = useRoute();
-  const { tourId } = route.params as { tourId: string };
+  const navigation = useNavigation();
+  // Defensive: handle missing params
+  const tourId = (route as any)?.params?.tourId;
   const [tour, setTour] = useState<Tour | null>(null);
-  const [showExpenseForm, setShowExpenseForm] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
-  const loadTour = async () => {
+
+  const loadTour = useCallback(async () => {
+    if (!tourId) return;
     const tours = await getTours();
     setTour(tours.find(t => t.id === tourId) || null);
-  };
+  }, [tourId]);
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadTour);
     loadTour();
-  }, []);
+    return unsubscribe;
+  }, [navigation, loadTour]);
 
+  if (!tourId) return <Text>Invalid tour selected.</Text>;
   if (!tour) return <Text>Loading...</Text>;
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      <Text style={{ fontSize: 22, fontWeight: 'bold' }}>{tour.name}</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>{tour.name}</Text>
       <Text>{tour.description}</Text>
-      <MemberDropdown members={tour.members} selected={selectedMember} onSelect={setSelectedMember} />
-      <BalanceSummary tour={tour} selectedMember={selectedMember} />
-      <Button title="Add Expense" onPress={() => setShowExpenseForm(true)} />
-      {showExpenseForm && <ExpenseForm tour={tour} onClose={() => { setShowExpenseForm(false); loadTour(); }} />}
-      <ExpenseList tour={tour} selectedMember={selectedMember} />
+      <BalanceSummary tour={tour} />
+  {/* Add Expense button removed as per lint suggestion */}
+      <ExpenseList tour={tour} onExpenseDeleted={loadTour} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+});
 
 export default TourDetailScreen;

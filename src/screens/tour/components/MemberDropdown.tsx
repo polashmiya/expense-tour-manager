@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Picker } from 'react-native';
+import { View, Text } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { TourMember } from '../../../types/tour';
 
 const MemberDropdown = ({ members, selected, onSelect }: { members: TourMember[], selected: string | null, onSelect: (id: string | null) => void }) => {
