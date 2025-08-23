@@ -6,7 +6,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TransactionProvider } from './context/TransactionContext';
 import HomeScreen from './screens/home/HomeScreen';
-import TourScreen from './screens/tour/TourScreen';
+
 import GroupDetailsScreen from './screens/home/components/GroupDetailsScreen';
 import AddTransactionScreen from './screens/home/components/AddTransactionScreen';
 import EditTransactionScreen from './screens/home/components/EditTransactionScreen';
@@ -16,9 +16,20 @@ import AllPersonalTransactionsScreen from './screens/home/components/AllPersonal
 import AllIncomeScreen from './screens/home/components/AllIncomeScreen';
 import AllExpenseScreen from './screens/home/components/AllExpenseScreen';
 import AllTransactionsScreen from './screens/home/components/AllTransactionsScreen';
+import CreateTourScreen from './screens/tour/CreateTourScreen';
+import TourDetailScreen from './screens/tour/TourDetailScreen';
+import TourScreen from './screens/tour/TourScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+
+const HomeTabIcon = ({ color, size }: { color: string; size: number }) => (
+  <MaterialCommunityIcons name="home" color={color} size={size} />
+);
+const TourTabIcon = ({ color, size }: { color: string; size: number }) => (
+  <MaterialCommunityIcons name="map" color={color} size={size} />
+);
 
 function MainTabs() {
   return (
@@ -27,20 +38,15 @@ function MainTabs() {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" color={color} size={size} />
-          ),
+          tabBarIcon: HomeTabIcon,
         }}
       />
-
       {/* add a another tab called Tour */}
       <Tab.Screen
         name="Tour"
         component={TourScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="map" color={color} size={size} />
-          ),
+          tabBarIcon: TourTabIcon,
         }}
       />
     </Tab.Navigator>
@@ -104,6 +110,16 @@ const AppNavigator = () => (
             name="AllTransactions"
             component={AllTransactionsScreen}
             options={{ title: 'All Transactions' }}
+          />
+          <Stack.Screen
+            name="CreateTour"
+            component={CreateTourScreen}
+            options={{ title: 'Create Tour' }}
+          />
+          <Stack.Screen
+            name="TourDetail"
+            component={TourDetailScreen}
+            options={{ title: 'Tour Details' }}
           />
         </Stack.Navigator>
       </NavigationContainer>
