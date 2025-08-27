@@ -23,6 +23,11 @@ const AddExpenseScreen: React.FC = () => {
       setError('Please fill all fields and select at least one participant.');
       return;
     }
+    // Prevent if paidBy is the only participant in paidFor
+    if (participants.length === 1 && participants[0] === paidBy) {
+      setError('Paid by and paid for cannot be the same person.');
+      return;
+    }
     const expense: TourExpense = {
       id: uuid.v4().toString(),
       description: description.trim(),
