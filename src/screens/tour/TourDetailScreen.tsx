@@ -4,6 +4,7 @@ import { getTours } from '../../storage/tourStorage';
 import { Tour } from '../../types/tour';
 import ExpenseList from './components/ExpenseList';
 import BalanceSummary from './components/BalanceSummary';
+import SettlementSummary from './components/SettlementSummary';
 import { useRoute, useNavigation } from '@react-navigation/native';
 
 const TourDetailScreen = () => {
@@ -33,9 +34,10 @@ const TourDetailScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>{tour.name}</Text>
       <Text>{tour.description}</Text>
-      <BalanceSummary tour={tour} />
+  <BalanceSummary tour={tour} />
+  <SettlementSummary tour={tour} />
   {/* Add Expense button removed as per lint suggestion */}
-      <ExpenseList tour={tour} onExpenseDeleted={loadTour} />
+  <ExpenseList tour={tour} onExpenseDeleted={loadTour} />
     </View>
   );
 };

@@ -23,14 +23,21 @@ const BalanceSummary = ({ tour }: { tour: Tour }) => {
       {tour.members.map(m => (
         <View key={m.id} style={styles.row}>
           <Text style={styles.name}>{m.name}</Text>
-          <Text
-            style={[
-              styles.amount,
-              balances[m.id] > 0 ? styles.positive : balances[m.id] < 0 ? styles.negative : styles.zero
-            ]}
-          >
-            {'৳ ' + (balances[m.id] > 0 ? '+' : balances[m.id] < 0 ? '-' : '') + Math.abs(balances[m.id]).toFixed(2)}
-          </Text>
+          {(() => {
+            const val = balances[m.id];
+            const displayVal = Math.abs(val) < 0.009 ? 0 : val;
+            let style = styles.zero;
+            if (displayVal > 0) style = styles.positive;
+            else if (displayVal < 0) style = styles.negative;
+            let sign = '';
+            if (displayVal > 0) sign = '+';
+            else if (displayVal < 0) sign = '-';
+            return (
+              <Text style={[styles.amount, style]}>
+                {'৳ ' + sign + Math.abs(displayVal).toFixed(2)}
+              </Text>
+            );
+          })()}
         </View>
       ))}
     </View>

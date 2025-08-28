@@ -4,49 +4,59 @@ import { StyleSheet, ScrollView, TouchableOpacity, View, Modal } from 'react-nat
 import { Button, Text } from 'react-native-paper';
 import InputField from '../../components/InputField';
 import { TourMember } from '../../types/tour';
-import { useNavigation } from '@react-navigation/native';
-import { addTour } from '../../storage/tourStorage';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { addTour, updateTour } from '../../storage/tourStorage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+
 const CreateTourScreen = () => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const navigation = useNavigation();
+  const route = useRoute();
+  type RouteParams = { editTour?: import('../../types/tour').Tour };
+  const params = route.params as RouteParams | undefined;
+  const editTour = params?.editTour;
+  
+  // If editTour is present, all fields are typed correctly
+  // Otherwise, undefined
+  const [name, setName] = useState(editTour?.name ?? '');
+  const [description, setDescription] = useState(editTour?.description ?? '');
+  const [startDate, setStartDate] = useState<Date | null>(editTour?.startDate ? new Date(editTour.startDate) : null);
+  const [endDate, setEndDate] = useState<Date | null>(editTour?.endDate ? new Date(editTour.endDate) : null);
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [error, setError] = useState('');
-  const [members, setMembers] = useState<TourMember[]>([]);
-  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [members, setMembers] = useState<TourMember[]>(editTour?.members ?? []);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>(editTour?.members ? editTour.members.map((m: TourMember) => m.id) : []);
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [newMemberName, setNewMemberName] = useState('');
-  const navigation = useNavigation();
 
   const handleCreate = async () => {
     if (!name.trim()) {
       setError('Name is required');
       return;
     }
-    // Generate a simple unique id for the tour
-    const id = Date.now().toString();
-    await addTour({
-      id,
+    const tourData = {
+      id: editTour?.id || Date.now().toString(),
       name,
       description,
       startDate: startDate ? startDate.toISOString().slice(0, 10) : undefined,
       endDate: endDate ? endDate.toISOString().slice(0, 10) : undefined,
-      createDate: new Date().toISOString(),
-  members: members.filter(m => selectedMembers.includes(m.id)),
-      expenses: [],
-    });
+      createDate: editTour?.createDate || new Date().toISOString(),
+      members: members.filter(m => selectedMembers.includes(m.id)),
+      expenses: editTour?.expenses || [],
+    };
+    if (editTour) {
+      await updateTour(tourData);
+    } else {
+      await addTour(tourData);
+    }
     navigation.goBack();
   };
 
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Create Tour</Text>
         <View style={styles.fieldGap}>
           <InputField label="Tour Name" value={name} onChangeText={setName} error={error} />
         </View>
@@ -113,7 +123,7 @@ const CreateTourScreen = () => {
           </View>
         </View>
         <Button mode="contained" onPress={handleCreate} style={styles.button}>
-          Create
+          {editTour ? 'Update' : 'Create'}
         </Button>
       </ScrollView>
 
@@ -296,6 +306,7 @@ const styles = StyleSheet.create({
   selectedMembersRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    paddingVertical: 12,
   },
   memberChip: {
     backgroundColor: '#e0e7ff',

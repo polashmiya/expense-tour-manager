@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Text, Card, IconButton } from 'react-native-paper';
@@ -9,12 +8,14 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type RootStackParamList = {
   TourDetail: { tourId: string };
-  CreateTour: undefined;
+  CreateTour: { editTour?: Tour } | undefined;
+  AddExpense: { tour: Tour };
 };
 
 const TourScreen = () => {
   const [tours, setTours] = useState<Tour[]>([]);
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const loadTours = async () => {
     const data = await getTours();
@@ -34,29 +35,49 @@ const TourScreen = () => {
 
   const renderTour = ({ item }: { item: Tour }) => (
     <Card style={styles.card}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('TourDetail', { tourId: item.id })}
-        style={styles.tourTouchable}
-      >
-        <Card.Title title={item.name} titleStyle={styles.cardTitle} />
-        <Card.Content>
-          <Text style={styles.cardDesc}>{item.description}</Text>
-        </Card.Content>
-      </TouchableOpacity>
-      <IconButton
-        icon="delete"
-        size={24}
-        onPress={() => handleDeleteTour(item.id)}
-        style={styles.deleteBtn}
-        accessibilityLabel="Delete Tour"
-      />
+      <View style={styles.cardContentRow}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('TourDetail', { tourId: item.id })}
+          style={styles.tourTouchable}
+        >
+          <Card.Title title={item.name} titleStyle={styles.cardTitle} />
+          {item?.description && (
+            <Card.Content>
+              <Text style={styles.cardDesc}>{item.description}</Text>
+            </Card.Content>
+          )}
+        </TouchableOpacity>
+        <View style={styles.iconBtnGroup}>
+          <IconButton
+            icon="plus"
+            size={22}
+            onPress={() => navigation.navigate('AddExpense', { tour: item })}
+            style={styles.addExpenseBtn}
+            accessibilityLabel="Add Expense to Tour"
+          />
+          <IconButton
+            icon="pencil"
+            size={22}
+            onPress={() => navigation.navigate('CreateTour', { editTour: item })}
+            style={styles.editBtn}
+            accessibilityLabel="Edit Tour"
+          />
+          <IconButton
+            icon="delete"
+            size={22}
+            onPress={() => handleDeleteTour(item.id)}
+            style={styles.deleteBtn}
+            accessibilityLabel="Delete Tour"
+            // containerColor="#ffe0e0"
+          />
+        </View>
+      </View>
     </Card>
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.header}>Tours</Text>
         <IconButton
           icon="plus"
           size={28}
@@ -70,7 +91,9 @@ const TourScreen = () => {
         keyExtractor={item => item.id}
         renderItem={renderTour}
         contentContainerStyle={styles.flatListContent}
-        ListEmptyComponent={<Text style={styles.emptyText}>No tours found.</Text>}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No tours found.</Text>
+        }
       />
     </View>
   );
@@ -86,7 +109,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     marginBottom: 16,
   },
   header: {
@@ -96,39 +119,73 @@ const styles = StyleSheet.create({
   },
   plusBtn: {
     margin: 0,
+    backgroundColor: '#e0e7ff',
+    borderRadius: 20,
+  },
+  addExpenseBtn: {
+    margin: 0,
+    // backgroundColor: '#e0ffe0',
+    borderRadius: 16,
+    fontWeight: "bold",
   },
   card: {
-    marginBottom: 14,
-    borderRadius: 12,
-    elevation: 2,
-    backgroundColor: '#fff',
+    marginBottom: 16,
+    borderRadius: 16,
+    elevation: 3,
+    backgroundColor: '#e3f0ff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    paddingVertical: 2,
+    paddingHorizontal: 2,
+  },
+  cardContentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingRight: 4,
+  },
+  iconBtnGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginLeft: 4,
+  },
+  editBtn: {
+    margin: 0,
+    borderRadius: 16,
   },
   deleteBtn: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    zIndex: 1,
+    margin: 0,
+    borderRadius: 16,
   },
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#2a2a2a',
+    letterSpacing: 0.2,
   },
   cardDesc: {
     fontSize: 16,
-    color: '#666',
+    color: '#4a4a4a',
+    marginTop: 2,
   },
   tourTouchable: {
     flex: 1,
+    paddingVertical: 8,
+    paddingLeft: 8,
+    borderRadius: 12,
   },
   flatListContent: {
-    paddingBottom: 24,
+    paddingBottom: 32,
   },
   emptyText: {
     textAlign: 'center',
     color: '#aaa',
     marginTop: 40,
     fontSize: 18,
+    fontStyle: 'italic',
   },
 });
 
